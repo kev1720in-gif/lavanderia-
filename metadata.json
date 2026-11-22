@@ -1,0 +1,6 @@
+{
+  "name": "Lavandería Control",
+  "description": "Control y comparación de cargos de lavandería industrial por turno y empresa",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lavandería Control</string>
+
+    <!-- Navegación principal -->
+    <string name="nav_listado">Listado</string>
+    <string name="nav_administrar">Trabajadores</string>
+    <string name="nav_importar">Importar</string>
+    <string name="nav_empresas">Empresas</string>
+    <string name="nav_descarga">Descarga</string>
+    <string name="titulo_descarga">Control de Descarga</string>
+
+    <!-- Turnos -->
+    <string name="turno_a">Turno A</string>
+    <string name="turno_b">Turno B</string>
+    <string name="turno_selector_desc">Cambiar turno activo</string>
+
+    <!-- Listado Maestro -->
+    <string name="titulo_listado_maestro">Listado Maestro</string>
+    <string name="subtitulo_listado_maestro">Control de cargos recogidos en habitaciones</string>
+    <string name="buscar_trabajador_hint">Buscar por nombre, apellido, habitación o empresa…</string>
+    <string name="estado_si_bajo">SÍ BAJÓ</string>
+    <string name="estado_no_bajo">NO BAJÓ</string>
+    <string name="filtro_todos">Todos</string>
+    <string name="filtro_todas_empresas">Todas</string>
+    <string name="etiqueta_dato_prueba">PRUEBA</string>
+    <string name="sin_trabajadores_filtro">No hay trabajadores que coincidan con el filtro en este turno.</string>
+
+    <!-- Administración -->
+    <string name="titulo_administrar">Administrar Trabajadores</string>
+    <string name="agregar_trabajador">Agregar trabajador</string>
+    <string name="editar_trabajador">Editar trabajador</string>
+    <string name="eliminar_trabajador">Eliminar trabajador</string>
+    <string name="confirmar_eliminar_titulo">¿Eliminar trabajador?</string>
+    <string name="confirmar_eliminar_mensaje">Se eliminará a %1$s del listado maestro del %2$s. Los registros históricos existentes no serán alterados.</string>
+    <string name="eliminar_datos_prueba">Eliminar datos de prueba</string>
+    <string name="confirmar_eliminar_prueba_titulo">¿Eliminar datos ficticios de prueba?</string>
+    <string name="confirmar_eliminar_prueba_mensaje">Se eliminarán únicamente los %1$d trabajadores ficticios de prueba en ambos turnos. Los trabajadores reales importados o agregados manualmente se conservarán intactos.</string>
+    <string name="guardar">Guardar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="confirmar">Confirmar</string>
+
+    <!-- Formulario trabajador -->
+    <string name="campo_nombre">Nombre(s) *</string>
+    <string name="campo_primer_apellido">Primer apellido *</string>
+    <string name="campo_segundo_apellido">Segundo apellido</string>
+    <string name="campo_habitacion">Habitación *</string>
+    <string name="campo_pabellon">Pabellón o piso</string>
+    <string name="campo_empresa">Empresa *</string>
+    <string name="campo_turno">Turno asignado</string>
+
+    <!-- Importación -->
+    <string name="titulo_importar">Importar Listado</string>
+    <string name="subtitulo_importar">Cargar archivos Excel (.xlsx) o CSV por turno</string>
+    <string name="seleccionar_archivo">Seleccionar archivo (.xlsx / .csv)</string>
+    <string name="confirmar_importacion">Confirmar importación</string>
+    <string name="reiniciar_importacion">Cargar otro archivo</string>
+
+    <!-- Empresas -->
+    <string name="titulo_empresas">Empresas y Resumen</string>
+    <string name="subtitulo_empresas">Ocho empresas independientes por turno</string>
+</resources>
