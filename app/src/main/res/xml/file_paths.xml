@@ -3,4 +3,7 @@
     <cache-path
         name="ocr_temp_images"
         path="ocr_temp/" />
+    <cache-path
+        name="lucy_vision_temp_images"
+        path="lucy_vision_temp/" />
 </paths>

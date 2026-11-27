@@ -14,10 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Apartment
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.DocumentScanner
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.outlined.Apartment
+import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material.icons.outlined.DocumentScanner
 import androidx.compose.material.icons.outlined.Group
@@ -55,6 +57,9 @@ import androidx.navigation.navArgument
 import com.example.data.importer.FormatoArchivo
 import com.example.data.ocr.OcrImageProcessor
 import com.example.domain.model.EmpresaOficial
+import com.example.lucy.ui.LucyPhotoIntake
+import com.example.lucy.ui.LucyScreen
+import com.example.lucy.ui.LucyViewModel
 import com.example.ui.components.ShiftSelectorHeader
 import com.example.ui.screens.AdministrarTrabajadoresScreen
 import com.example.ui.screens.AjustesScreen
@@ -75,6 +80,7 @@ const val ROUTE_LISTADO = "listado_maestro"
 const val ROUTE_ADMINISTRAR = "administrar_trabajadores"
 const val ROUTE_EMPRESAS = "empresas_resumen"
 const val ROUTE_DESCARGA = "control_descarga"
+const val ROUTE_LUCY = "lucy_asistente"
 const val ROUTE_EMPRESA_DETALLE_PATTERN = "empresa_detalle/{codigoEmpresa}"
 const val ROUTE_AJUSTES = "ajustes"
 const val ROUTE_IMPORTAR = "importar_listado"
@@ -117,6 +123,13 @@ private val destinosPrincipales = listOf(
         iconoActivo = Icons.Filled.DocumentScanner,
         iconoInactivo = Icons.Outlined.DocumentScanner,
         testTag = "nav_descarga"
+    ),
+    DestinoPrincipal(
+        ruta = ROUTE_LUCY,
+        etiqueta = "Lucy",
+        iconoActivo = Icons.Filled.AutoAwesome,
+        iconoInactivo = Icons.Outlined.AutoAwesome,
+        testTag = "nav_lucy"
     )
 )
 
@@ -125,7 +138,8 @@ fun LavanderiaApp(
     mainViewModel: MainViewModel,
     importacionViewModel: ImportacionViewModel,
     backupViewModel: BackupViewModel,
-    descargaViewModel: DescargaViewModel
+    descargaViewModel: DescargaViewModel,
+    lucyViewModel: LucyViewModel? = null
 ) {
     val mainState by mainViewModel.uiState.collectAsStateWithLifecycle()
     val importState by importacionViewModel.uiState.collectAsStateWithLifecycle()
@@ -142,6 +156,11 @@ fun LavanderiaApp(
         OcrImageProcessor.limpiarTemporalesHuerfanos(
             context = context.applicationContext,
             rutasActivas = rutasActivas
+        )
+        val rutaFotoLucy = lucyViewModel?.uiState?.value?.fotoSeleccionada?.tempFilePath
+        LucyPhotoIntake.cleanupOrphanedFiles(
+            context = context.applicationContext,
+            activePaths = setOfNotNull(rutaFotoLucy)
         )
     }
 
@@ -392,6 +411,23 @@ fun LavanderiaApp(
                                 },
                                 onMostrarMensaje = { msg -> mainViewModel.emitirMensaje(msg) }
                             )
+                        }
+
+                        composable(ROUTE_LUCY) {
+                            if (lucyViewModel != null) {
+                                LucyScreen(lucyViewModel = lucyViewModel)
+                            } else {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "Lucy no está conectada en esta vista.",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = SlateMutedText
+                                    )
+                                }
+                            }
                         }
 
                         composable(

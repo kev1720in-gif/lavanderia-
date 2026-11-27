@@ -46,6 +46,11 @@ import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
+data class ResultadoMarcacionLote(
+    val recienMarcados: List<TrabajadorConEstado>,
+    val yaEstabanMarcados: List<TrabajadorConEstado>
+)
+
 class LavanderiaRepository(
     private val database: LavanderiaDatabase
 ) {
@@ -230,6 +235,78 @@ class LavanderiaRepository(
                 marcadoEn = System.currentTimeMillis()
             )
             marcacionDao.upsert(entidad)
+        }
+    }
+
+    /**
+     * Marca en una sola transacción e idempotente a un lote de trabajadores como SÍ BAJÓ / SÍ SUBIÓ (`siBajo = true`).
+     * - Si un trabajador ya estaba marcado con `siBajo = true`, no modifica su registro ni crea duplicados.
+     * - Ignora cualquier trabajador que no pertenezca al `turno` indicado.
+     */
+    suspend fun marcarTrabajadoresSiBajoEnLote(
+        turno: Turno,
+        trabajadores: List<TrabajadorConEstado>,
+        origen: String = "VOZ"
+    ): ResultadoMarcacionLote {
+        if (trabajadores.isEmpty()) {
+            return ResultadoMarcacionLote(
+                recienMarcados = emptyList(),
+                yaEstabanMarcados = emptyList()
+            )
+        }
+
+        return database.withTransaction {
+            val ahora = System.currentTimeMillis()
+            val sesion = sesionDao.getOpenSessionByTurno(turno.id)
+                ?: crearSesionInicial(turno).also { sesionDao.insert(it) }
+
+            val existentesPorTrabajador = marcacionDao.getBySesionAndTurnoOnce(sesion.id, turno.id)
+                .mapNotNull { m -> m.trabajadorId?.let { it to m } }
+                .toMap()
+
+            val recienMarcados = mutableListOf<TrabajadorConEstado>()
+            val yaEstabanMarcados = mutableListOf<TrabajadorConEstado>()
+
+            trabajadores
+                .distinctBy { it.id }
+                .filter { it.turno == turno }
+                .forEachIndexed { idx, trabajador ->
+                    val marcaActual = existentesPorTrabajador[trabajador.id]
+                    if (marcaActual?.siBajo == true) {
+                        yaEstabanMarcados.add(trabajador.copy(siBajo = true))
+                    } else {
+                        val nuevoOrigen = combinarOrigen(
+                            origenActual = marcaActual?.origen,
+                            siBajoActual = false,
+                            nuevoOrigen = origen
+                        )
+                        marcacionDao.upsert(
+                            MarcacionEntity(
+                                id = marcaActual?.id ?: UUID.randomUUID().toString(),
+                                sesionId = sesion.id,
+                                turnoId = turno.id,
+                                trabajadorId = trabajador.id,
+                                nombreCompletoSnapshot = trabajador.nombreCompleto,
+                                primerApellidoSnapshot = trabajador.primerApellido,
+                                segundoApellidoSnapshot = trabajador.segundoApellido,
+                                habitacionSnapshot = trabajador.habitacion,
+                                pabellonSnapshot = trabajador.pabellon,
+                                empresaIdSnapshot = trabajador.empresa.id,
+                                empresaNombreSnapshot = trabajador.empresa.nombre,
+                                siBajo = true,
+                                esDatoPrueba = trabajador.esDatoPrueba,
+                                origen = nuevoOrigen,
+                                marcadoEn = ahora + idx
+                            )
+                        )
+                        recienMarcados.add(trabajador.copy(siBajo = true))
+                    }
+                }
+
+            ResultadoMarcacionLote(
+                recienMarcados = recienMarcados,
+                yaEstabanMarcados = yaEstabanMarcados
+            )
         }
     }
 

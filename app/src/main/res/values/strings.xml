@@ -8,7 +8,9 @@
     <string name="nav_importar">Importar</string>
     <string name="nav_empresas">Empresas</string>
     <string name="nav_descarga">Descarga</string>
+    <string name="nav_lucy">Lucy</string>
     <string name="titulo_descarga">Control de Descarga</string>
+    <string name="titulo_lucy">Asistente Lucy</string>
 
     <!-- Turnos -->
     <string name="turno_a">Turno A</string>
